@@ -1,7 +1,27 @@
-var pdfjsLib = require("pdfjs-dist");
-var natural = require("natural");
+const pdfjsLib = require("pdfjs-dist");
+const natural = require("natural");
 
-var pdfPath = "../nlp-javascrit/pdfs/13.pdf";
+const watsonApiKey = require("./watson-nlu.json").apikey;
+const NaturalLanguageUnderstandingV1 = require("watson-developer-cloud/natural-language-understanding/v1.js");
+
+const nlu = new NaturalLanguageUnderstandingV1({
+  iam_apikey: watsonApiKey,
+  version: "2018-04-05",
+  url: "https://gateway.watsonplatform.net/natural-language-understanding/api/"
+});
+
+var contentOfPages = [];
+
+var articles = [];
+var article = {
+  title: "",
+  references: [],
+  authors: [],
+  institutions: [],
+  terms: []
+};
+
+var pdfPath = "../nlp-javascrit/pdfs/118.pdf";
 var tokenizer = new natural.WordTokenizer();
 var tokenizerEndLine = new natural.RegexpTokenizer({ pattern: /\[[\d]+\]/ });
 var Tfldf = natural.TfIdf;
@@ -30,21 +50,18 @@ loadingTask.promise
 
     var loadPage = function(pageNum) {
       return doc.getPage(pageNum).then(function(page) {
-        //console.log("# Página " + pageNum);
-        var viewport = page.getViewport({ scale: 1.0 });
-        //console.log("Tamanho: " + viewport.width + "x" + viewport.height);
-        //console.log();
         return page
           .getTextContent()
           .then(function(content) {
             var strings = content.items.map(function(item) {
+              console.log(item);
               return item.str.trim();
             });
-            //console.log("## Conteúdo do texto");
+
             let contentOfPage = strings.join(" ").toUpperCase();
-            console.log(tokenizerEndLine.tokenize(contentOfPage));
-            //console.log(contentOfPage);
+            //console.log(tokenizerEndLine.tokenize(contentOfPage));
             tfidf.addDocument(contentOfPage);
+            contentOfPages.push(contentOfPage);
             //console.log(tokenizer.tokenize(contentOfPage));
           })
           .then(function() {
@@ -59,13 +76,39 @@ loadingTask.promise
   })
   .then(
     function() {
-      console.log("# fim do documento");
+      //fetchWatsonAndReturnKeywords(contentOfPages.join(" "));
       tfidf.tfidfs("EFERENCES", function(i, measure) {
-        console.log("documento #" + i + " is " + measure);
-        //console.log(tfidf.listTerms);
+        //console.log("documento #" + i + " is " + measure);
+        if (measure > 0) {
+        } //console.log(contentOfPages[i]);
       });
     },
     function(err) {
       console.error("Error: " + err);
     }
   );
+
+async function fetchWatsonAndReturnKeywords(sentence) {
+  return new Promise((resolve, reject) => {
+    nlu.analyze(
+      {
+        text: sentence,
+        features: {
+          keywords: {}
+        }
+      },
+      (error, response) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+
+        const keywords = response.keywords.map(keyword => {
+          return keyword.text;
+        });
+        console.log(keywords);
+        resolve(keywords);
+      }
+    );
+  });
+}
