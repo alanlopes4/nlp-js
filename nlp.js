@@ -1,6 +1,11 @@
 var pdfjsLib = require("pdfjs-dist");
+var natural = require("natural");
 
 var pdfPath = "../nlp-javascrit/pdfs/13.pdf";
+var tokenizer = new natural.WordTokenizer();
+var tokenizerEndLine = new natural.RegexpTokenizer({ pattern: /\[[\d]+\]/ });
+var Tfldf = natural.TfIdf;
+var tfidf = new Tfldf();
 
 var loadingTask = pdfjsLib.getDocument(pdfPath);
 loadingTask.promise
@@ -25,18 +30,22 @@ loadingTask.promise
 
     var loadPage = function(pageNum) {
       return doc.getPage(pageNum).then(function(page) {
-        console.log("# Página " + pageNum);
+        //console.log("# Página " + pageNum);
         var viewport = page.getViewport({ scale: 1.0 });
-        console.log("Tamanho: " + viewport.width + "x" + viewport.height);
-        console.log();
+        //console.log("Tamanho: " + viewport.width + "x" + viewport.height);
+        //console.log();
         return page
           .getTextContent()
           .then(function(content) {
             var strings = content.items.map(function(item) {
-              return item.str;
+              return item.str.trim();
             });
-            console.log("## Conteúdo do texto");
-            console.log(strings.join(" "));
+            //console.log("## Conteúdo do texto");
+            let contentOfPage = strings.join(" ").toUpperCase();
+            console.log(tokenizerEndLine.tokenize(contentOfPage));
+            //console.log(contentOfPage);
+            tfidf.addDocument(contentOfPage);
+            //console.log(tokenizer.tokenize(contentOfPage));
           })
           .then(function() {
             console.log();
@@ -51,6 +60,10 @@ loadingTask.promise
   .then(
     function() {
       console.log("# fim do documento");
+      tfidf.tfidfs("EFERENCES", function(i, measure) {
+        console.log("documento #" + i + " is " + measure);
+        //console.log(tfidf.listTerms);
+      });
     },
     function(err) {
       console.error("Error: " + err);
