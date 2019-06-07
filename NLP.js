@@ -88,15 +88,7 @@ function getLinesByRegExpression(text, idx) {
         if (text[j] != undefined) new_reference += text[j];
       references[references.length - 1] += new_reference;
     }
-    if (count == 0) {
-      count = 4;
-      let new_reference = "";
-      for (let j = i + 1; j < i + count - 1; j++)
-        if (text[j] != undefined) new_reference += text[j];
-      references[references.length - 1] += new_reference;
-    }
-
-    count = count == 4 ? 4 : 0;
+    count = 0;
   }
   return references;
 }
@@ -131,9 +123,9 @@ function init() {
 
 function generateEdgesGraph(articles) {
   let new_articles = articles.map(article => {
-    console.log("FILE", article.article);
     article.references.forEach(reference => {
       console.log(reference);
+      //console.log(reference.slice());
     });
   });
 }
