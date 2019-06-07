@@ -1,5 +1,5 @@
 var textract = require("textract");
-
+var g_graph = require("./generateGraph.js");
 var filePaths = [
   "13.pdf",
   "17.pdf",
@@ -73,8 +73,30 @@ function getReferences(text) {
 
 function getLinesByRegExpression(text, idx) {
   let references = [];
+  let count = 0;
   for (let i = idx + 1; i < text.length; i++) {
-    if (reg.test(text[i])) references.push(text[i]);
+    if (reg.test(text[i])) {
+      references.push(text[i]);
+      if (!reg.test(text[i + 1])) count++;
+      if (!reg.test(text[i + 2])) count++;
+      if (!reg.test(text[i + 3])) count++;
+      if (!reg.test(text[i + 4])) count++;
+    }
+    if (count > 0 && count <= 3) {
+      let new_reference = "";
+      for (let j = i + 1; j < i + count; j++)
+        if (text[j] != undefined) new_reference += text[j];
+      references[references.length - 1] += new_reference;
+    }
+    if (count == 0) {
+      count = 4;
+      let new_reference = "";
+      for (let j = i + 1; j < i + count - 1; j++)
+        if (text[j] != undefined) new_reference += text[j];
+      references[references.length - 1] += new_reference;
+    }
+
+    count = count == 4 ? 4 : 0;
   }
   return references;
 }
@@ -101,15 +123,25 @@ function init() {
           terms: []
         });
         num++;
-        generateGraph(num);
+        generateGraphToJSON(num);
       })
       .catch(error => console.log(error));
   });
 }
 
-function generateGraph(num) {
+function generateEdgesGraph(articles) {
+  let new_articles = articles.map(article => {
+    console.log("FILE", article.article);
+    article.references.forEach(reference => {
+      console.log(reference);
+    });
+  });
+}
+
+function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    console.log(articles);
+    generateEdgesGraph(articles);
+    //g_graph.generateGraphFromArticles(articles);
   }
 }
 
