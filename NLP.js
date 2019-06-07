@@ -9,7 +9,7 @@ var filePaths = [
   "22.pdf",
   "23.pdf",
   "29.pdf",
-  "21.pdf",
+  "31.pdf",
   "46.pdf",
   "48.pdf",
   "49.pdf",
@@ -99,6 +99,42 @@ function getLinesByRegExpression(text, idx) {
   return references;
 }
 
+function getProblem(text) {
+  let problem = [];
+  text.some((line, idx) => {
+    //if (line.includes("THE WAY")) console.log("THE WAY", line);
+    //return line.contains("PROBLEM");
+  });
+  return problem.join("");
+}
+
+function getObjective(text) {
+  let objective = [];
+  text.forEach((line, idx) => {
+    if (line.includes("THIS RESEARCH")) {
+      objective.push(getObjetiveWhole(text, idx));
+    } else if (line.includes("THIS PAPER, WE")) {
+      objective.push(getObjetiveWhole(text, idx));
+    } else if (line.includes("WE PROPUSE")) {
+      objective.push(getObjetiveWhole(text, idx));
+    } else if (line.includes("PURPOSE OF THIS")) {
+      objective.push(getObjetiveWhole(text, idx));
+    }
+  });
+  console.log(objective);
+  return objective;
+}
+
+function getObjetiveWhole(text, idx) {
+  let objective = "";
+  while (!text[idx].includes(".")) {
+    objective += text[idx];
+    idx++;
+  }
+  objective += text[idx].substring(0, text[idx].indexOf("."));
+  return objective;
+}
+
 function init() {
   let num = 0;
   filePaths.forEach(file => {
@@ -106,14 +142,16 @@ function init() {
       .then(text => {
         //remove first line
         text.shift();
+        console.log(file);
+        getProblem(text);
 
-        articles.push({
+        /*articles.push({
           article: file,
           title: getTitle(text),
           authors: getAuthors(text),
           institutions: [],
           abstract: getAbsctract(text),
-          objective: "",
+          objective: getObjective(text),
           problem: "",
           methodology: "",
           contributes: "",
@@ -121,56 +159,16 @@ function init() {
           terms: []
         });
         num++;
-        generateGraphToJSON(num);
+        generateGraphToJSON(num);*/
       })
       .catch(error => console.log(error));
   });
 }
 
-function generateEdgesGraphOfReferences(articles) {
-  let new_articles = articles.map(article => {
-    let edgesReference = [];
-    article.references.forEach(reference => {
-      articles.map(article => {
-        if (
-          article.title.trim().length > 0 &&
-          reference.includes(article.title)
-        ) {
-          edgesReference.push(article.article);
-        }
-      });
-    });
-    return { ...article, edgesReference };
-  });
-
-  //console.log(new_articles);
-}
-
-function generateEdgesGraphOfAuthors(articles) {
-  let new_articles = articles.map(article1 => {
-    let edgesAuthor = [];
-    article1.authors.forEach(author => {
-      articles.map(article2 => {
-        console.log(author);
-        console.log(article2.authors);
-        if (
-          article1.file != article2.file &&
-          article2.authors.includes(author)
-        ) {
-          edgesAuthor.push(article2.article);
-        }
-      });
-    });
-    return { ...article1, edgesAuthor };
-  });
-
-  console.log(new_articles.edgesAuthor);
-}
-
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    generateEdgesGraphOfReferences(articles);
-    generateEdgesGraphOfAuthors(articles);
+    g_graph.generateEdgesGraphOfReferences(articles);
+    g_graph.generateEdgesGraphOfAuthors(articles);
     //g_graph.generateGraphFromArticles(articles);
   }
 }
