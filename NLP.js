@@ -102,37 +102,51 @@ function getLinesByRegExpression(text, idx) {
 function getProblem(text) {
   let problem = [];
   text.some((line, idx) => {
-    //if (line.includes("THE WAY")) console.log("THE WAY", line);
+    if (line.includes("THE WAY")) console.log("THE WAY", line);
     //return line.contains("PROBLEM");
   });
   return problem.join("");
+}
+
+function getMethodology(text) {
+  let methodology = [];
+  text.forEach((line, idx) => {
+    if (line.includes("METHODOLOGY")) {
+      methodology.push(getPhraseWhole(text, idx));
+    } else if (line.includes("INTERVIEWS")) {
+      methodology.push(getPhraseWhole(text, idx));
+    } else if (line.includes("SURVEYS")) {
+      methodology.push(getPhraseWhole(text, idx));
+    }
+  });
+  console.log(methodology);
+  return methodology;
 }
 
 function getObjective(text) {
   let objective = [];
   text.forEach((line, idx) => {
     if (line.includes("THIS RESEARCH")) {
-      objective.push(getObjetiveWhole(text, idx));
+      objective.push(getPhraseWhole(text, idx));
     } else if (line.includes("THIS PAPER, WE")) {
-      objective.push(getObjetiveWhole(text, idx));
+      objective.push(getPhraseWhole(text, idx));
     } else if (line.includes("WE PROPUSE")) {
-      objective.push(getObjetiveWhole(text, idx));
+      objective.push(getPhraseWhole(text, idx));
     } else if (line.includes("PURPOSE OF THIS")) {
-      objective.push(getObjetiveWhole(text, idx));
+      objective.push(getPhraseWhole(text, idx));
     }
   });
-  console.log(objective);
   return objective;
 }
 
-function getObjetiveWhole(text, idx) {
-  let objective = "";
+function getPhraseWhole(text, idx) {
+  let phrase = "";
   while (!text[idx].includes(".")) {
-    objective += text[idx];
+    phrase += text[idx];
     idx++;
   }
-  objective += text[idx].substring(0, text[idx].indexOf("."));
-  return objective;
+  phrase += text[idx].substring(0, text[idx].indexOf("."));
+  return phrase;
 }
 
 function init() {
@@ -142,10 +156,8 @@ function init() {
       .then(text => {
         //remove first line
         text.shift();
-        console.log(file);
-        getProblem(text);
 
-        /*articles.push({
+        articles.push({
           article: file,
           title: getTitle(text),
           authors: getAuthors(text),
@@ -153,13 +165,13 @@ function init() {
           abstract: getAbsctract(text),
           objective: getObjective(text),
           problem: "",
-          methodology: "",
+          methodology: getMethodology(text),
           contributes: "",
           references: getReferences(text),
           terms: []
         });
         num++;
-        generateGraphToJSON(num);*/
+        generateGraphToJSON(num);
       })
       .catch(error => console.log(error));
   });
@@ -167,6 +179,7 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
+    console.log(articles);
     g_graph.generateEdgesGraphOfReferences(articles);
     g_graph.generateEdgesGraphOfAuthors(articles);
     //g_graph.generateGraphFromArticles(articles);
