@@ -50,7 +50,13 @@ function getAuthors(text) {
     idx_abstract = idx;
     return line.startsWith("ABSTRACT");
   });
-  return text[idx_abstract - 1];
+  return text[idx_abstract - 1]
+    .split(",")
+    .filter(author => !author.includes("IEEE") && !author.includes("MEMBER"))
+    .map(author => {
+      if (author.includes("AND")) return author.slice(4);
+      return author;
+    });
 }
 
 function getAbsctract(text) {
@@ -121,18 +127,50 @@ function init() {
   });
 }
 
-function generateEdgesGraph(articles) {
+function generateEdgesGraphOfReferences(articles) {
   let new_articles = articles.map(article => {
+    let edgesReference = [];
     article.references.forEach(reference => {
-      console.log(reference);
-      //console.log(reference.slice());
+      articles.map(article => {
+        if (
+          article.title.trim().length > 0 &&
+          reference.includes(article.title)
+        ) {
+          edgesReference.push(article.article);
+        }
+      });
     });
+    return { ...article, edgesReference };
   });
+
+  //console.log(new_articles);
+}
+
+function generateEdgesGraphOfAuthors(articles) {
+  let new_articles = articles.map(article1 => {
+    let edgesAuthor = [];
+    article1.authors.forEach(author => {
+      articles.map(article2 => {
+        console.log(author);
+        console.log(article2.authors);
+        if (
+          article1.file != article2.file &&
+          article2.authors.includes(author)
+        ) {
+          edgesAuthor.push(article2.article);
+        }
+      });
+    });
+    return { ...article1, edgesAuthor };
+  });
+
+  console.log(new_articles.edgesAuthor);
 }
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    generateEdgesGraph(articles);
+    generateEdgesGraphOfReferences(articles);
+    generateEdgesGraphOfAuthors(articles);
     //g_graph.generateGraphFromArticles(articles);
   }
 }
