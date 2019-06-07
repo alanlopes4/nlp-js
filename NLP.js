@@ -119,7 +119,6 @@ function getMethodology(text) {
       methodology.push(getPhraseWhole(text, idx));
     }
   });
-  console.log(methodology);
   return methodology;
 }
 
@@ -179,10 +178,8 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    console.log(articles);
-    g_graph.generateEdgesGraphOfReferences(articles);
+    //g_graph.generateEdgesGraphOfReferences(articles);
     g_graph.generateEdgesGraphOfAuthors(articles);
-    //g_graph.generateGraphFromArticles(articles);
   }
 }
 

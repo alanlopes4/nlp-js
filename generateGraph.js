@@ -1,7 +1,6 @@
+var json = require("./generateJSON.js");
+
 var i,
-  s,
-  N = 10,
-  E = 20,
   g = {
     nodes: [],
     edges: []
@@ -13,6 +12,7 @@ function generateEdgesGraphOfReferences(articles) {
     article1.references.forEach(reference => {
       articles.map(article2 => {
         if (
+          article1.article != article2.article &&
           article2.title.trim().length > 0 &&
           reference.includes(article2.title)
         ) {
@@ -20,10 +20,10 @@ function generateEdgesGraphOfReferences(articles) {
         }
       });
     });
+    console.log(article1.article, edgesReference);
     return { ...article1, edgesReference };
   });
-
-  //new_articles.map(a => console.log(a.edgesReference));
+  generateGraphFromArticles(new_articles, "edgesReference", "graphReferences");
 }
 
 function generateEdgesGraphOfAuthors(articles) {
@@ -41,15 +41,14 @@ function generateEdgesGraphOfAuthors(articles) {
     });
     return { ...article1, edgesAuthor };
   });
-  //new_articles.map(a => console.log(a.edgesAuthor));
+  generateGraphFromArticles(new_articles, "edgesAuthor", "graphAuthors");
 }
 
-function generateGraphFromArticles(articles) {
+function generateGraphFromArticles(articles, typeGraph, filename) {
   // Generate a random graph:
-  console.log(articles.length);
   for (i = 0; i < articles.length; i++)
     g.nodes.push({
-      id: "n" + i,
+      id: "n" + articles[i].article,
       label: articles[i].title,
       x: Math.random(),
       y: Math.random(),
@@ -57,15 +56,21 @@ function generateGraphFromArticles(articles) {
       color: "#666"
     });
 
-  for (i = 0; i < E; i++)
-    g.edges.push({
-      id: "e" + i,
-      source: "n" + ((Math.random() * N) | 0),
-      target: "n" + ((Math.random() * N) | 0),
-      size: Math.random(),
-      color: "#ccc"
-    });
+  for (i = 0; i < articles.length; i++) {
+    if (articles[i][typeGraph].length > 0) {
+      for (let j = 0; j < articles[i][typeGraph].length; j++) {
+        g.edges.push({
+          id: "e" + articles[i].article,
+          source: "n" + articles[i].article,
+          target: "n" + articles[i][typeGraph][j],
+          size: Math.random(),
+          color: "#ccc"
+        });
+      }
+    }
+  }
 
+  json.generateFileJSON(g, filename);
   // Instantiate sigma:
   /*s = new sigma({
     graph: g,
