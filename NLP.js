@@ -83,7 +83,7 @@ function getReferences(text) {
       return getLinesByRegExpression(text, i);
   }
 }
-//Armazena linhas de acordo com uma expressão regular
+
 function getLinesByRegExpression(text, idx) {
   let references = [];
   let count = 0;
