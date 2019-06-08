@@ -42,7 +42,12 @@ function extractTextFromPdf(filePath, config) {
 
 function getTitle(text) {
   let title = "";
-  for (let i = 0; i < idx_abstract - 1; i++) title += `${text[i]} `;
+  let i = 0;
+  while (!text[i].includes(",") && !text[i].includes("ABSTRACT")) {
+    title += `${text[i]} `;
+    i++;
+  }
+  console.log(title);
   return title;
 }
 
@@ -161,7 +166,7 @@ function init() {
       .then(text => {
         //remove first line
         text.shift();
-
+        console.log(file);
         articles.push({
           article: file,
           title: getTitle(text),
