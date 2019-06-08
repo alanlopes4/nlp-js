@@ -1,10 +1,6 @@
 var json = require("./generateJSON.js");
 
-var i,
-  g = {
-    nodes: [],
-    edges: []
-  };
+var i;
 
 function generateEdgesGraphOfReferences(articles) {
   let new_articles = articles.map(article1 => {
@@ -20,7 +16,6 @@ function generateEdgesGraphOfReferences(articles) {
         }
       });
     });
-    console.log(article1.article, edgesReference);
     return { ...article1, edgesReference };
   });
   generateGraphFromArticles(new_articles, "edgesReference", "graphReferences");
@@ -45,6 +40,10 @@ function generateEdgesGraphOfAuthors(articles) {
 }
 
 function generateGraphFromArticles(articles, typeGraph, filename) {
+  var g = {
+    nodes: [],
+    edges: []
+  };
   // Generate a random graph:
   for (i = 0; i < articles.length; i++)
     g.nodes.push({

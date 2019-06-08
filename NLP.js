@@ -178,7 +178,7 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    //g_graph.generateEdgesGraphOfReferences(articles);
+    g_graph.generateEdgesGraphOfReferences(articles);
     g_graph.generateEdgesGraphOfAuthors(articles);
   }
 }

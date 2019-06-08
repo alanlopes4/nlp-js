@@ -17,6 +17,7 @@
     />
 
     <link rel="stylesheet" href="index.css" />
+    <script src="loadJSON.js"></script>
   </head>
 
   <body>
@@ -27,7 +28,7 @@
           <button
             type="button"
             class="btn btn-primary"
-            onclick="init()"
+            onclick="loadJSON('graphAuthors.json')"
             style="height: 50px"
           >
             Grafo Autores
@@ -37,7 +38,7 @@
           <button
             type="button"
             class="btn btn-secondary"
-            onclick="init()"
+            onclick="loadJSON('graphReferences.json')"
             style="height: 50px"
           >
             Grafo Referências
@@ -47,7 +48,7 @@
           <button
             type="button"
             class="btn btn-success"
-            onclick="init()"
+            onclick="loadJSON('')"
             style="height: 50px"
           >
             Grafo Termos
@@ -59,16 +60,8 @@
     </div>
 
     <script>
-      sigma.parsers.json("graphAuthors.json", {
+      /*sigma.parsers.json("graphAuthors.json", {
         container: "sigma-container",
-        settings: {
-          defaultNodeColor: "#ec5148"
-        }
-      });
-    </script>
-    <script>
-      /*sigma.parsers.json("nodes.json", {
-        container: "container",
         settings: {
           defaultNodeColor: "#ec5148"
         }
