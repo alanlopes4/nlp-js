@@ -39,6 +39,27 @@ function generateEdgesGraphOfAuthors(articles) {
   generateGraphFromArticles(new_articles, "edgesAuthor", "graphAuthors");
 }
 
+function generateEdgesGraphOfTerms(articles) {
+  let articles_processed = [];
+  let new_articles = articles.map(article1 => {
+    let edgesTerms = [];
+    article1.terms.forEach(term => {
+      articles.map(article2 => {
+        if (
+          article1.article != article2.article &&
+          article2.terms.includes(term)
+        ) {
+          if (!articles_processed.includes(article2.article))
+            edgesTerms.push(article2.article);
+        }
+      });
+    });
+    articles_processed.push(article1.article);
+    return { ...article1, edgesTerms };
+  });
+  generateGraphFromArticles(new_articles, "edgesTerms", "graphTerms");
+}
+
 function generateGraphFromArticles(articles, typeGraph, filename) {
   var g = {
     nodes: [],
@@ -59,7 +80,7 @@ function generateGraphFromArticles(articles, typeGraph, filename) {
     if (articles[i][typeGraph].length > 0) {
       for (let j = 0; j < articles[i][typeGraph].length; j++) {
         g.edges.push({
-          id: "e" + articles[i].article,
+          id: "e" + i + "" + j,
           source: "n" + articles[i].article,
           target: "n" + articles[i][typeGraph][j],
           size: Math.random(),
@@ -75,5 +96,6 @@ function generateGraphFromArticles(articles, typeGraph, filename) {
 module.exports = {
   generateGraphFromArticles,
   generateEdgesGraphOfAuthors,
-  generateEdgesGraphOfReferences
+  generateEdgesGraphOfReferences,
+  generateEdgesGraphOfTerms
 };
