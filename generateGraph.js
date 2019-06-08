@@ -70,11 +70,6 @@ function generateGraphFromArticles(articles, typeGraph, filename) {
   }
 
   json.generateFileJSON(g, filename);
-  // Instantiate sigma:
-  /*s = new sigma({
-    graph: g,
-    container: "sigma-container"
-  });*/
 }
 
 module.exports = {

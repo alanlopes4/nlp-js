@@ -24,6 +24,7 @@ var config = {
 
 var idx_abstract, idx_index;
 var reg = /\[[0-9]+\]/g;
+var reg_last_reference = /(\d{4})\./g;
 var articles = [];
 
 function extractTextFromPdf(filePath, config) {
@@ -76,27 +77,29 @@ function getReferences(text) {
       return getLinesByRegExpression(text, i);
   }
 }
-
+//Armazena linhas de acordo com uma expressão regular
 function getLinesByRegExpression(text, idx) {
   let references = [];
   let count = 0;
   for (let i = idx + 1; i < text.length; i++) {
-    if (reg.test(text[i])) {
-      references.push(text[i]);
-      if (!reg.test(text[i + 1])) count++;
-      if (!reg.test(text[i + 2])) count++;
-      if (!reg.test(text[i + 3])) count++;
-      if (!reg.test(text[i + 4])) count++;
-    }
-    if (count > 0 && count <= 3) {
-      let new_reference = "";
-      for (let j = i + 1; j < i + count; j++)
-        if (text[j] != undefined) new_reference += text[j];
-      references[references.length - 1] += new_reference;
-    }
-    count = 0;
+    if (reg.test(text[i])) references.push(getWholeReference(text, i));
   }
   return references;
+}
+function getWholeReference(text, idx) {
+  let reference = "";
+  let count = 0;
+  while (!reg_last_reference.test(text[idx])) {
+    reference += text[idx];
+    idx++;
+    if (count++ > 5) break;
+  }
+  if (count <= 5)
+    reference += text[idx].substring(
+      0,
+      text[idx].slice(0).search(reg_last_reference) + 5
+    );
+  return reference;
 }
 
 function getProblem(text) {
@@ -148,8 +151,11 @@ function getPhraseWhole(text, idx) {
   return phrase;
 }
 
+function test() {}
+
 function init() {
   let num = 0;
+
   filePaths.forEach(file => {
     extractTextFromPdf("./pdfs/" + file, config)
       .then(text => {
@@ -178,9 +184,10 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    g_graph.generateEdgesGraphOfReferences(articles);
-    g_graph.generateEdgesGraphOfAuthors(articles);
+    //g_graph.generateEdgesGraphOfReferences(articles);
+    //g_graph.generateEdgesGraphOfAuthors(articles);
   }
 }
 
 init();
+//test();
