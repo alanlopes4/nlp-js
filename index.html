@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--SIGMA JS-->
+    <script src="./sigma.js-1.2.1/build/sigma.min.js"></script>
+    <script src="./sigma.js-1.2.1/build/plugins/sigma.parsers.json.min.js"></script>
+    <!--BOOTSTRAP-->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body>
+    <div class="container-main">
+      <h1>Natural Processing Languange</h1>
+      <div class="row btns-action">
+        <div class="col-4 d-flex justify-content-center">
+          <button
+            type="button"
+            class="btn btn-primary"
+            onclick="init()"
+            style="height: 50px"
+          >
+            Grafo Autores
+          </button>
+        </div>
+        <div class="col-4 d-flex justify-content-center">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="init()"
+            style="height: 50px"
+          >
+            Grafo Referências
+          </button>
+        </div>
+        <div class="col-4 d-flex justify-content-center">
+          <button
+            type="button"
+            class="btn btn-success"
+            onclick="init()"
+            style="height: 50px"
+          >
+            Grafo Termos
+          </button>
+        </div>
+      </div>
+
+      <div id="sigma-container"></div>
+    </div>
+
+    <script>
+      sigma.parsers.json("graphAuthors.json", {
+        container: "sigma-container",
+        settings: {
+          defaultNodeColor: "#ec5148"
+        }
+      });
+    </script>
+    <script>
+      /*sigma.parsers.json("nodes.json", {
+        container: "container",
+        settings: {
+          defaultNodeColor: "#ec5148"
+        }
+      });*/
+    </script>
+  </body>
+</html>
