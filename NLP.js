@@ -21,6 +21,8 @@ var filePaths = [
 var config = {
   preserveLineBreaks: true
 };
+var wordCounts = [];
+var NUM_TERMS = 10;
 
 var idx_abstract, idx_index;
 var reg = /\[[0-9]+\]/g;
@@ -47,7 +49,6 @@ function getTitle(text) {
     title += `${text[i]} `;
     i++;
   }
-  console.log(title);
   return title;
 }
 
@@ -156,6 +157,33 @@ function getPhraseWhole(text, idx) {
   return phrase;
 }
 
+function getMostCommomWords(text) {
+  let words = text.join("").split(/\b/);
+  let count = 0;
+  let terms = [];
+  for (var i = 0; i < words.length; i++) {
+    if (words[i].length > 3 && isNaN(words[i])) {
+      wordCounts[words[i]] = (wordCounts[words[i]] || 0) + 1;
+      if (count < NUM_TERMS) {
+        terms.push({
+          term: words[i],
+          frequency: wordCounts[words[i]]
+        });
+        count++;
+      } else if (count == NUM_TERMS) {
+        terms.sort((a, b) => a.frequency < b.frequency);
+      } else {
+        terms.map(v =>
+          v.frequency < wordCounts[words[i]]
+            ? { term: words[i], frequency: wordCounts[words[i]] }
+            : v
+        );
+      }
+    }
+  }
+  return terms;
+}
+
 function test() {}
 
 function init() {
@@ -166,7 +194,7 @@ function init() {
       .then(text => {
         //remove first line
         text.shift();
-        console.log(file);
+
         articles.push({
           article: file,
           title: getTitle(text),
@@ -178,7 +206,7 @@ function init() {
           methodology: getMethodology(text),
           contributes: "",
           references: getReferences(text),
-          terms: []
+          terms: getMostCommomWords(text).map(v => v.term)
         });
         num++;
         generateGraphToJSON(num);
@@ -189,6 +217,7 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
+    console.log(articles);
     //g_graph.generateEdgesGraphOfReferences(articles);
     //g_graph.generateEdgesGraphOfAuthors(articles);
   }
