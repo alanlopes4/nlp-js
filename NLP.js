@@ -1,5 +1,7 @@
 var textract = require("textract");
 var g_graph = require("./generateGraph.js");
+var json = require("./generateJSON.js");
+
 var filePaths = [
   "13.pdf",
   "17.pdf",
@@ -225,6 +227,8 @@ function generateGraphToJSON(num) {
     g_graph.generateEdgesGraphOfReferences(articles);
     g_graph.generateEdgesGraphOfAuthors(articles);
     g_graph.generateEdgesGraphOfTerms(articles);
+
+    json.generateFileJSON(articles, "articles");
   }
 }
 

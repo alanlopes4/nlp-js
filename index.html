@@ -11,6 +11,13 @@
     <script src="./sigma.js-1.2.1/build/plugins/sigma.layout.forceAtlas2.min.js"></script>
     <script src="./sigma.js-1.2.1/build/plugins/sigma.renderers.customShapes.min.js"></script>
 
+    <!--JQUERY-->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+
     <!--BOOTSTRAP-->
     <link
       rel="stylesheet"
@@ -21,14 +28,18 @@
 
     <link rel="stylesheet" href="index.css" />
     <script>
-      sigma.classes.graph.addMethod("neighbors", function(nodeId) {
-        var k,
-          neighbors = {},
-          index = this.allNeighborsIndex[nodeId] || {};
+      $(document).ready(function() {
+        loadArticleJSON();
 
-        for (k in index) neighbors[k] = this.nodesIndex[k];
+        sigma.classes.graph.addMethod("neighbors", function(nodeId) {
+          var k,
+            neighbors = {},
+            index = this.allNeighborsIndex[nodeId] || {};
 
-        return neighbors;
+          for (k in index) neighbors[k] = this.nodesIndex[k];
+
+          return neighbors;
+        });
       });
     </script>
     <script src="loadJSON.js"></script>
@@ -71,6 +82,26 @@
       </div>
 
       <div id="sigma-container"></div>
+    </div>
+    <div class="container-information">
+      <h4>Title</h4>
+      <p id="title"></p>
+      <h4>Authors</h4>
+      <p id="authors"></p>
+      <h4>Abstract</h4>
+      <p id="abstract"></p>
+      <h4>Objective</h4>
+      <p id="objective"></p>
+      <h4>Problem</h4>
+      <p id="problem"></p>
+      <h4>Methodology</h4>
+      <p id="methodology"></p>
+      <h4>Contributes</h4>
+      <p id="contributes"></p>
+      <h4>References</h4>
+      <p id="references"></p>
+      <h4>Terms</h4>
+      <p id="terms"></p>
     </div>
   </body>
 </html>

@@ -1,3 +1,5 @@
+var articles = [];
+
 function loadJSON(filename) {
   clearScreen();
 
@@ -9,8 +11,7 @@ function loadJSON(filename) {
         edgeColor: "default",
         defaultNodeColor: "#ec5148",
         defaultEdgeColor: "#dbc09b",
-        font: "calibri",
-        zoomMax: 1
+        font: "calibri"
       }
     },
     function(s) {
@@ -45,6 +46,10 @@ function loadJSON(filename) {
         s.refresh();
       });
 
+      s.bind("clickNode", function(e) {
+        updateInformationArticle(e.data.node.id);
+      });
+
       s.bind("outNode", function(e) {
         s.graph.nodes().forEach(function(n) {
           n.color = "#ec5148";
@@ -58,6 +63,35 @@ function loadJSON(filename) {
         s.refresh();
       });
     }
+  );
+}
+
+function loadArticleJSON() {
+  $.getJSON("./articles.json", function(data) {
+    $.each(data, function(key, val) {
+      articles[`n${val.article}`] = { ...val };
+    });
+  });
+}
+
+function updateInformationArticle(article) {
+  console.log("NODE ID", article);
+  document.getElementById("title").innerHTML = articles[article].title;
+  document.getElementById("authors").innerHTML = articles[article].authors.join(
+    ", "
+  );
+  document.getElementById("abstract").innerHTML = articles[article].abstract;
+  document.getElementById("objective").innerHTML = articles[article].objective;
+  document.getElementById("problem").innerHTML = articles[article].problem;
+  document.getElementById("methodology").innerHTML =
+    articles[article].methodology;
+  document.getElementById("contributes").innerHTML =
+    articles[article].contributes;
+  document.getElementById("references").innerHTML = articles[
+    article
+  ].references.join("<br >");
+  document.getElementById("terms").innerHTML = articles[article].terms.join(
+    "<br >"
   );
 }
 
