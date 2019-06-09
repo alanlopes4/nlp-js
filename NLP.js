@@ -24,7 +24,7 @@ var config = {
 var wordCounts = [];
 var NUM_TERMS = 10;
 
-var idx_abstract, idx_index;
+var idx_abstract, idx_index, idx_reference;
 var reg = /\[[0-9]+\]/g;
 var reg_last_reference = /(\d{4})\./g;
 var articles = [];
@@ -79,8 +79,10 @@ function getAbsctract(text) {
 
 function getReferences(text) {
   for (let i = idx_index; i < text.length; i++) {
-    if (text[i].startsWith("REFERENCES"))
+    if (text[i].startsWith("REFERENCES")) {
+      idx_reference = i;
       return getLinesByRegExpression(text, i);
+    }
   }
 }
 
@@ -158,7 +160,10 @@ function getPhraseWhole(text, idx) {
 }
 
 function getMostCommomWords(text) {
-  let words = text.join("").split(/\b/);
+  let words = text
+    .slice(idx_abstract, idx_reference)
+    .join("")
+    .split(/\b/);
   let count = 0;
   let terms = [];
   for (var i = 0; i < words.length; i++) {

@@ -73,18 +73,18 @@ function generateGraphFromArticles(articles, typeGraph, filename) {
       x: Math.random(),
       y: Math.random(),
       size: 10,
-      color: "#666"
+      color: "#ec5148",
+      originalColor: "#eee",
+      colorOver: "blue"
     });
 
   for (i = 0; i < articles.length; i++) {
     if (articles[i][typeGraph].length > 0) {
       for (let j = 0; j < articles[i][typeGraph].length; j++) {
         g.edges.push({
-          id: "e" + i + "" + j,
+          id: "e" + i + "" + j + "" + Math.random(),
           source: "n" + articles[i].article,
-          target: "n" + articles[i][typeGraph][j],
-          size: Math.random(),
-          color: "#ccc"
+          target: "n" + articles[i][typeGraph][j]
         });
       }
     }
