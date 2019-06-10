@@ -46,11 +46,12 @@ function generateEdgesGraphOfTerms(articles) {
     article1.terms.forEach(term => {
       articles.map(article2 => {
         if (
-          article1.article != article2.article &&
+          article1.article.trim() != article2.article.trim() &&
           article2.terms.includes(term)
         ) {
-          if (!articles_processed.includes(article2.article))
+          if (!articles_processed.includes(article2.article)) {
             edgesTerms.push(article2.article);
+          }
         }
       });
     });
