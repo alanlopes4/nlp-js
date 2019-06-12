@@ -114,11 +114,12 @@ function getWholeReference(text, idx) {
 
 function getProblem(text) {
   let problem = [];
-  text.some((line, idx) => {
-    if (line.includes("THE WAY")) console.log("THE WAY", line);
-    //return line.contains("PROBLEM");
+  text.forEach((line, idx) => {
+    if (line.includes("THE WAY")) {
+      problem.push(getPhraseWhole(text, idx));
+    }
   });
-  return problem.join("");
+  return problem;
 }
 
 function getMethodology(text) {
@@ -149,6 +150,16 @@ function getObjective(text) {
     }
   });
   return objective;
+}
+
+function getContributes(text) {
+  let contributes = [];
+  text.forEach((line, idx) => {
+    if (line.includes("CONTRIBUTES")) {
+      contributes.push(getPhraseWhole(text, idx));
+    }
+  });
+  return contributes;
 }
 
 function getPhraseWhole(text, idx) {
@@ -235,9 +246,9 @@ function init() {
           institutions: [],
           abstract: getAbsctract(text),
           objective: getObjective(text),
-          problem: "",
+          problem: getProblem(text),
           methodology: getMethodology(text),
-          contributes: "",
+          contributes: getContributes(text),
           references: getReferences(text),
           terms: getMostCommomWords(text).map(v => v.term)
         });
@@ -250,6 +261,7 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
+    console.log(articles);
     g_graph.generateEdgesGraphOfReferences(articles);
     g_graph.generateEdgesGraphOfAuthors(articles);
     g_graph.generateEdgesGraphOfTerms(articles);
