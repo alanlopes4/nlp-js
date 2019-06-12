@@ -170,7 +170,14 @@ function getMostCommomWords(text) {
   let terms = [];
   wordCounts = [];
   for (var i = 0; i < words.length; i++) {
-    if (words[i].length > 4 && isNaN(words[i])) {
+    //para todas as palavras do artigo
+    if (
+      words[i].length > 4 &&
+      isNaN(words[i]) &&
+      (!words[i].trim().includes("· · ·") &&
+        !words[i].trim().includes(", . . . ,"))
+    ) {
+      //se a palavra ter 5 caracteres ou mais e se n for um dígito
       wordCounts[words[i]] = (wordCounts[words[i]] || 0) + 1;
       if (count < NUM_TERMS) {
         terms.push({
@@ -184,26 +191,29 @@ function getMostCommomWords(text) {
       } else {
         let idx_term = -1;
         let found_term = terms.some((v, idx) => {
-          if (v.term == words[i]) {
+          if (v.term.trim() == words[i].trim()) {
             idx_term = idx;
             return true;
           }
           return false;
         });
+
         if (found_term) {
           terms[idx_term] = { term: words[i], frequency: wordCounts[words[i]] };
           found_term = false;
-        } else
+        } else {
+          let found = false;
           terms = terms.map(v => {
-            if (v.frequency < wordCounts[words[i]]) {
+            if (v.frequency < wordCounts[words[i]] && !found) {
+              found = true;
               return { term: words[i], frequency: wordCounts[words[i]] };
             }
             return v;
           });
+        }
       }
     }
   }
-
   return terms.sort((a, b) => a.frequency < b.frequency);
 }
 

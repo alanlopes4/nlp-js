@@ -7,6 +7,7 @@ function loadJSON(filename) {
     filename,
     {
       container: "sigma-container",
+      type: sigma.renderers.canvas,
       settings: {
         edgeColor: "default",
         defaultNodeColor: "#ec5148",
@@ -15,9 +16,6 @@ function loadJSON(filename) {
       }
     },
     function(s) {
-      s.graph.nodes().forEach(function(n) {
-        n.type = "square";
-      });
       // We first need to save the original colors of our
       // nodes and edges, like this:
       s.graph.nodes().forEach(function(n) {

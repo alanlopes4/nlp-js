@@ -85,7 +85,8 @@ function generateGraphFromArticles(articles, typeGraph, filename) {
         g.edges.push({
           id: "e" + i + "" + j + "" + Math.random(),
           source: "n" + articles[i].article,
-          target: "n" + articles[i][typeGraph][j]
+          target: "n" + articles[i][typeGraph][j],
+          label: "TESTANDO"
         });
       }
     }
