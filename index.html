@@ -84,8 +84,21 @@
 
       <div id="sigma-container"></div>
     </div>
-    <div class="container-information">
-      <h4>Title</h4>
+    <div id="information-container" class="container-information">
+      <div class="row" style="width: 100%">
+        <div class="col">
+          <button
+            id="btn-watson"
+            type="button"
+            class="btn btn-success btn-block"
+            onclick="loadJSONWATSON()"
+            disabled
+          >
+            IA Watson
+          </button>
+        </div>
+      </div>
+      <h4 id="title-h4">Title</h4>
       <p id="title"></p>
       <h4>Authors</h4>
       <p id="authors"></p>
@@ -103,6 +116,26 @@
       <p id="references"></p>
       <h4>Terms</h4>
       <p id="terms"></p>
+    </div>
+    <div
+      id="watson-container"
+      class="container-information-watson"
+      style="display: none;"
+    >
+      <h4>Categorias</h4>
+      <p id="categories"></p>
+      <h4>Conceitos</h4>
+      <p id="concepts"></p>
+      <h4>Emoção</h4>
+      <p id="emotion"></p>
+      <h4>Entidades</h4>
+      <p id="entities"></p>
+      <h4>Palavras chaves</h4>
+      <p id="keywords"></p>
+      <h4>Sentimento</h4>
+      <p id="sentiment"></p>
+      <h4>Idioma</h4>
+      <p id="language"></p>
     </div>
   </body>
 </html>

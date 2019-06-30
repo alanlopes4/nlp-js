@@ -1,6 +1,13 @@
 var textract = require("textract");
 var g_graph = require("./generateGraph.js");
 var json = require("./generateJSON.js");
+var watsonApiKey = require("./ibm-watson/credentials-watson.json").apikey;
+var NaturalLanguageUnderstand = require("watson-developer-cloud/natural-language-understanding/v1");
+var nlu = new NaturalLanguageUnderstand({
+  iam_apikey: watsonApiKey,
+  version: "2018-04-05",
+  url: "https://gateway.watsonplatform.net/natural-language-understanding/api"
+});
 
 var filePaths = [
   "13.pdf",
@@ -23,6 +30,7 @@ var filePaths = [
 var config = {
   preserveLineBreaks: true
 };
+
 var wordCounts = [];
 var NUM_TERMS = 10;
 
@@ -31,6 +39,47 @@ var reg = /\[[0-9]+\]/g;
 var reg_last_reference = /(\d{4})\./g;
 var articles = [];
 
+function analyzeWatson(file, text) {
+  nlu.analyze(
+    {
+      text: text,
+      features: {
+        keywords: {
+          limit: 10,
+          sentiment: true,
+          emotion: true
+        },
+        categories: {
+          limit: 10
+        },
+        concepts: {
+          limit: 10
+        },
+        emotion: {},
+        entities: {
+          limit: 10,
+          sentiment: true,
+          emotion: true
+        },
+        relations: {},
+        semantic_roles: {
+          limit: 10
+        },
+        sentiment: {
+          document: true
+        }
+      }
+    },
+    (error, response) => {
+      if (error) {
+        console.log("ERROR API WATSON:" + error);
+      }
+
+      json.generateFileJSON(response, `${file}-watson`);
+    }
+  );
+}
+
 function extractTextFromPdf(filePath, config) {
   return new Promise((resolve, reject) => {
     textract.fromFileWithPath(filePath, config, function(error, text) {
@@ -38,7 +87,6 @@ function extractTextFromPdf(filePath, config) {
         reject(error);
         return;
       }
-
       resolve(text.toUpperCase().split("\n"));
     });
   });
@@ -232,13 +280,12 @@ function test() {}
 
 function init() {
   let num = 0;
-
+  //extractTextFromPdf("./pdfs/13.pdf", config);
   filePaths.forEach(file => {
     extractTextFromPdf("./pdfs/" + file, config)
       .then(text => {
         //remove first line
         text.shift();
-
         articles.push({
           article: file,
           title: getTitle(text),
@@ -253,6 +300,7 @@ function init() {
           terms: getMostCommomWords(text).map(v => v.term)
         });
         num++;
+        //analyzeWatson(file.split(".")[0], text.join(""));
         generateGraphToJSON(num);
       })
       .catch(error => console.log(error));
@@ -261,7 +309,6 @@ function init() {
 
 function generateGraphToJSON(num) {
   if (num == filePaths.length) {
-    console.log(articles);
     g_graph.generateEdgesGraphOfReferences(articles);
     g_graph.generateEdgesGraphOfAuthors(articles);
     g_graph.generateEdgesGraphOfTerms(articles);
@@ -270,5 +317,5 @@ function generateGraphToJSON(num) {
   }
 }
 
-init();
-//test();
+//init();
+test();
