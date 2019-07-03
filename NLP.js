@@ -80,6 +80,8 @@ function analyzeWatson(file, text) {
   );
 }
 
+function getInstituicions() {}
+
 function extractTextFromPdf(filePath, config) {
   return new Promise((resolve, reject) => {
     textract.fromFileWithPath(filePath, config, function(error, text) {
@@ -164,6 +166,12 @@ function getProblem(text) {
   let problem = [];
   text.forEach((line, idx) => {
     if (line.includes("THE WAY")) {
+      problem.push(getPhraseWhole(text, idx));
+    }else if (line.includes("CHALLENGE")) {
+      problem.push(getPhraseWhole(text, idx));
+    } else if (line.includes("DIFFICULT")) {
+      problem.push(getPhraseWhole(text, idx));
+    }else if (line.includes("SUFFERS")) {
       problem.push(getPhraseWhole(text, idx));
     }
   });
@@ -276,7 +284,6 @@ function getMostCommomWords(text) {
   return terms.sort((a, b) => a.frequency < b.frequency);
 }
 
-function test() {}
 
 function init() {
   let num = 0;
@@ -317,5 +324,4 @@ function generateGraphToJSON(num) {
   }
 }
 
-//init();
-test();
+init();
